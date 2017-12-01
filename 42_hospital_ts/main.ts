@@ -165,7 +165,7 @@ class Controller{
                 this.r_med.add(nome, med);
             }
         }else if(cmd == "seeAll"){
-            return this.r_pac.values().join("\n") + "\n" + this.r_med.values().join("\n");
+            return this.r_pes.values().join("\n");
         }else if(cmd == "tie"){
             let med = this.r_med.get(ui[1]);
             for(let i = 2; i < ui.length; i++)
@@ -173,7 +173,8 @@ class Controller{
         }else if(cmd == "msg"){//from to msg
             this.r_pes.get(ui[1]).sendMsg(ui[2], ui.slice(3).join(" "));
         }else if(cmd == "inbox"){
-            return this.r_pes.get(ui[1]).readMsgs().join("\n");
+            let nome = ui[1];
+            return this.r_pes.get(nome).readMsgs().join("\n");
         }else{
             return "comando nao encontrado";
         }
