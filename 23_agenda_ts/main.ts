@@ -43,43 +43,17 @@ class Controller {
         else if(cmd == "show")
             return "" + this.agenda.getContato(ui[1]);
         else if(cmd == "showFav")
-            return "" + poo.vet2str("Favoritos\n", this.agenda.favoritos, "\n");
+            return "" + "Favoritos\n" + this.agenda.favoritos.join("\n");
         else if(cmd == "showAll")
             return "" + this.agenda;
         else
             return "comando invalido"; 
         return "done";
     }
-    
-    commandLine(){
-        let line = "";
-        while(line != "fim"){
-            line = poo.cin(">> ");
-            if(line == "" || line.substr(0, 2) == "  ")
-                continue;
-            poo.cout(line);
-            try {
-                poo.cout(this.process(line));
-            }catch(e){
-                poo.cout("" + e.message)
-            }
-        }
-    }
 }
 
 let c = new Controller();
-c.commandLine();
-
-/*
-addCont david
-addCont rui
-addCont rex
-addFone david oi 35
-addFone david casa 32
-show
-*/
-
-
+poo.shell(x => c.process(x));
 
 
 

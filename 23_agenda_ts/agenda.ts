@@ -50,15 +50,15 @@ export class Agenda {
     }
 
     toString(): string {
-        return poo.vet2str("Agenda\n", this.contatos, "\n");
+        return "Agenda\n" + this.contatos.join("\n") + "\n";
     }
 
     get contatos(): Array<Contato> {
-        return poo.map2vet(this.m_contatos);
+        return Array.from(this.m_contatos.values());
     }
 
     get favoritos(): Array<Contato> {
-        return poo.map2vet(this.m_favoritos);
+        return Array.from(this.m_favoritos.values());
     }
 
     static test() {

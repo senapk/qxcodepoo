@@ -1,121 +1,121 @@
-//include do readline-sync
-declare function require(name : string);
-var input = require('readline-sync');
-
-class Telefone{
+class Fone {
     id : string;
     numero : string;
+
     constructor(id : string = "" , numero : string = ""){
         this.id = id;
         this.numero = numero;
     }
+
+    toString(){
+        return "[" + this.id + ":" + this.numero + "]";
+    }
 }
 
 class Contato{
-    nome : string;
-    email : string;
-    telefones : Telefone[];
+    id : string;
+    fones : Fone[];
     
-    constructor(nome : string = "", email : string = ""){
-        this.nome = nome;
-        this.email = email;
-        this.telefones = [];
+    constructor(nome : string = "") {
+        this.id = nome;
+        this.fones = [];
     }
 
-    show(){
-        console.log("nome: " + this.nome + " email: " + this.email);
-        for(let fone of this.telefones)
-            console.log("\t[id: " + fone.id + " numero: " + fone.numero + "]");
+    toString(): string {
+        let saida = this.id + " ";
+        for(let fone of this.fones)
+            saida += "" + fone;
+        return saida;
+        //ou apenas
+        //return this.id + " " + this.fones.join("");
     }
 
-    addFone(fone : Telefone): boolean{
-        for(let elemento of this.telefones)
+    addFone(fone : Fone): void {
+        for(let elemento of this.fones)
             if (elemento.id == fone.id)
-                return false;
-        this.telefones.push(fone); 
-        return true;
+                throw new Error("fail: fone " + fone.id + " ja existe");
+        this.fones.push(fone); 
     }
 
-    rmFone(id : string): boolean{
-        for (let i in this.telefones){
-            if (this.telefones[i].id == id){
+    rmFone(foneId : string): void {
+        for (let i in this.fones){
+            if (this.fones[i].id == foneId){
                 //remove 1 elemento a partir da posicao i
-                this.telefones.splice(Number(i), 1);
-                return true;
+                this.fones.splice(Number(i), 1);
+                return;
             }
         }
-        return false;    
+        throw new Error("fail: fone " + foneId + " nao existe");  
     }
 }
 
-//realiza a interação com o usuario alterando contado
-//retorna as alterações de contato
-function commandLine(contato : Contato) : Contato{
-    let op : string[] = [""];
-    while(op[0] != "fim"){
-        op = input.question("Digite comando ou help: ").split(" ");
-        if (op[0] == "help"){
-            console.log("iniciar $nome $email");
-            console.log("show");
-            console.log("addFone $id $numero");
-            console.log("rmFone $id");
-            console.log("fim");   
-        }
-
-        if (op[0] == "iniciar"){
-            contato = new Contato(op[1], op[2]);
-            contato.show();
-        }
-
-        if (op[0] == "addFone") {
-            if (contato.addFone(new Telefone(op[1], op[2])))
-                console.log("telefone adicionado");
-            else
-                console.log("id ja existe");
-            contato.show();
-        }
-
-        if (op[0] == "rmFone"){
-            if (contato.rmFone(op[1]))
-                console.log("telefone removido");
-            else
-                console.log("id nao existe");
-            contato.show();
-        }
-
-        if(op[0] == "show"){
-            console.log("Info Contato");
-            contato.show();
-        }
+class Controller {
+    contato: Contato;
+    constructor(){
+        this.contato = new Contato("-");
     }
-    return contato;
+
+    process(line: string) : string{
+        let ui = line.split(" ");
+        let cmd = ui[0];
+        let HELP =  "iniciar _nome \n" + 
+                    "show \n" + 
+                    "addFone _id _numero \n" + 
+                    "rmFone _id";  
+        
+        if (cmd == "help") {
+            return HELP;
+        } else if (cmd == "iniciar") { //nome email
+            this.contato = new Contato(ui[1]);
+        } else if (cmd == "addFone") {
+            this.contato.addFone(new Fone(ui[1], ui[2]));
+        } else if (cmd == "rmFone") {
+            this.contato.rmFone(ui[1]);
+        } else if (cmd == "show") {
+            return "" + this.contato;
+        } else {
+            return "comando invalido";
+        }
+        return "done";
+    }
 }
 
-//inicializa o contato e retorna o contato inicializado
-function inicializar(contato : Contato) : Contato{
-    contato = new Contato("Anibal", "bonitao18@gmail.com");
-    contato.addFone(new Telefone("oi", "88"));
-    contato.addFone(new Telefone("tim", "85"));
-    contato.addFone(new Telefone("casa", "87"));
-    contato.rmFone("tim");
-    return contato;
+//--------------------------------------------------
+import {poo} from "./poo_aux";
+
+let agenda = new Controller();
+poo.print("Digite um comando ou help: ");
+while(true){
+    let line = poo.getline("");
+    if((line == "") || (line[0] == " ")) //vazio ou resposta
+        continue;
+    try {
+        poo.print("  " + agenda.process(line));
+    } catch(e) {
+        poo.print("  " + e.message);
+    }
 }
 
-function main(){
-    let contato : Contato = new Contato();
-    contato = inicializar(contato);
-    contato = commandLine(contato);
-}
-
-main()
-
-
-
-
-
-
-
-
+/*
+iniciar david
+  done
+addFone oi 881
+  done
+addFone tim 991
+  done 
+addFone casa 321
+  done 
+show
+  david [oi:881][tim:991][casa:321]
+rmFone casa
+  done
+show
+  david [oi:881][tim:991]
+rmFone claro
+  fail: fone claro nao existe
+addFone tim 992
+  fail: fone tim ja existe
+*/
 
 
 

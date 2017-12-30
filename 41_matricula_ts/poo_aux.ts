@@ -8,23 +8,18 @@ export class poo{
     }
 
     static cout(text: string){
-        console.log(text);
+        return console.log(text);
+    }
+
+    static map2vet<T>(mapa: Map<string, T>): Array<T> {
+        let vet = new Array<T>();
+        for(let elem of mapa.values())
+            vet.push(elem);
+        return vet;
     }
 
     //recebe um texto e retorna o texto com um tab de 2 espacos
     static tab(text: string, prefix: string = "  "): string {
         return prefix + text.split("\n").join("\n" + prefix);
-    }
-
-    static shell(process: (line :string) => string){
-        while(true){
-            let line = poo.cin(">>");
-            try{
-                let result = process(line);
-                poo.cout(poo.tab(result));
-            }catch(e){
-                poo.cout(poo.tab(e.message));
-            }
-        }
     }
 }
